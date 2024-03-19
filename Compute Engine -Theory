@@ -1,0 +1,379 @@
+# Google Compute Engine
+
+# Introduction
+
+**Google Compute Engine** (**GCE**) is the [Infrastructure as a Service](https://en.wikipedia.org/wiki/Infrastructure_as_a_Service) (IaaS) 
+component of [Google Cloud Platform](https://en.wikipedia.org/wiki/Google_Cloud_Platform) which is built on the global infrastructure 
+that runs [Google](https://en.wikipedia.org/wiki/Google)'s [search engine](https://en.wikipedia.org/wiki/Google_Search), 
+[Gmail](https://en.wikipedia.org/wiki/Gmail), [YouTube](https://en.wikipedia.org/wiki/YouTube) and other services. 
+
+Google Compute Engine enables users to launch [virtual machines](https://en.wikipedia.org/wiki/Virtual_machines) (VMs) on demand. 
+
+An *instance* is a virtual machine (VM) hosted on Google's infrastructure. 
+You can [create an instance](https://cloud.google.com/compute/docs/instances/create-start-instance) or 
+[create a group of managed instances (MIG)](https://cloud.google.com/compute/docs/instance-groups/creating-groups-of-managed-instances) by using the Google Cloud console, 
+the Google Cloud CLI, or the Compute Engine API.
+
+VMs can be launched from the standard images or custom images created by users. 
+GCE users must authenticate based on [OAuth](https://en.wikipedia.org/wiki/OAuth) 2.0 before launching the VMs. 
+Google Compute Engine can be accessed via the Developer Console, [RESTful API](https://en.wikipedia.org/wiki/RESTful_API) or 
+[command-line interface](https://en.wikipedia.org/wiki/Command-line_interface) (CLI).
+
+# **Instances and projects**
+
+## Project ID
+
+Your project ID is a unique identifier for your Google Cloud Platform project. 
+
+It's used to identify your project in various Google Cloud services and APIs.
+
+You can also find your project ID using the **`gcloud`** command-line tool by running the following command:
+
+`gcloud config get-value project`
+
+## Instances Or Virtual Machine(VM)
+
+Each instance belongs to a [Google Cloud console](https://console.cloud.google.com/) project, and a project can have one or more instances. 
+
+When you create an instance in a project, you specify the zone, operating system, and machine type of that instance. When you delete an instance, it is removed from the project.
+
+# **Instance templates**
+
+An instance template is a convenient way to save a virtual machine's (VM) configuration that includes machine type, boot disk image, labels, startup script, and other instance properties.
+
+Use instance templates any time you want to quickly create VMs or reservations for VMs based off of a pre-existing configuration. If you want to create a group of identical instances–a [MIG](https://cloud.google.com/compute/docs/instance-groups#types_of_managed_instance_groups)–you must have an instance template that the group can use.
+
+Instance templates are designed to create instances with identical configurations. So you cannot update an existing instance template or change an instance template after you create it.
+
+## **How to update instance templates?**
+
+If you need to make changes to the configuration, [create a new instance template](https://cloud.google.com/compute/docs/instance-templates/create-instance-templates). You can create a template based on an existing instance template, or based on an existing instance. You can also [override instance template fields](https://cloud.google.com/compute/docs/instances/create-vm-from-instance-template#creating_a_vm_instance_from_an_instance_template_with_overrides) when creating a VM instance from an instance template.
+
+### Use of zonal or regional resources in instance templates:-
+
+In an instance template, you might specify zonal resources, which restricts the use of that template to the zone where that resource resides. Similarly, if you specify a regional resource in a global instance template, the template is restricted to that region. For example, if you include a read-only persistent disk from `us-central1-b` in your instance template, you cannot use that template in any other zone because that specific disk exists only in zone `us-central1-b`
+
+## Regional and global instance templates
+
+Instance templates are available as both regional and global resources. The following table provides a comparison between regional and global instance templates.
+
+|  | Regional instance template | Global instance template |
+| --- | --- | --- |
+| Scope | Can be used in the specified region only. | Can be used in any region. |
+| Use case | • Reduce cross-region dependency.
+• Achieve data residency in a region. For example, to meet compliance requirements on the physical location of the data. | Reuse your instance template to create VMs, MIGs, and reservations in different regions. |
+
+**Get, List, and Delete Instance Templates** 
+For more info visit:-
+
+[Deterministic instance templates  |  Compute Engine Documentation  |  Google Cloud](https://cloud.google.com/compute/docs/instance-templates/deterministic-instance-templates)
+
+[Get, List, and Delete Instance Templates  |  Compute Engine Documentation  |  Google Cloud](https://cloud.google.com/compute/docs/instance-templates/get-list-delete-instance-templates#console)
+
+# Labels
+
+To organize your project, add arbitrary labels as key/value pairs to your resources. Use labels to indicate different environments, services, teams, and so on.
+
+Labels are key-value pairs that can be used on Google Cloud to group related or associated resources. 
+
+For example, on Compute Engine, you can use labels to group VMs in categories such as production, staging, or development so that you can search for resources that belong to each development stage.
+
+## Requirements for labels
+
+The labels applied to a resource must meet the following requirements:
+
+- Each resource can have up to 64 labels.
+- Each label must be a key-value pair.
+- Keys have a minimum length of 1 character and a maximum length of 63 characters, and cannot be empty. Values can be empty, and have a maximum length of 63 characters.
+- Keys and values can contain only lowercase letters, numeric characters, underscores, and dashes. All characters must use UTF-8 encoding, and international characters are allowed. Keys must start with a lowercase letter or international character.
+- The key portion of a label must be unique within a single resource. However, you can use the same key with multiple resources.
+
+### **Common uses of labels**
+
+- **Team or cost center labels**: Add labels based on team or cost center to distinguish instances owned by different teams (for example, `team:research` and `team:analytics`). You can use this type of label for cost accounting or budgeting.
+- **Component labels**: For example, `component:redis`, `component:frontend`, `component:ingest`, and `component:dashboard`.
+- **Environment or stage labels**: For example, `environment:production` and `environment:test`.
+- **State labels**: For example, `state:active`, `state:readytodelete`, and `state:archive`.
+- **Ownership labels**: Used to identify the teams that are responsible for operations, for example: `team:shopping-cart`.
+- **Virtual machine labels**: A label can be attached to a virtual machine. Virtual machine tags that you defined in the past appear as a label without a value.
+
+Labels can be used as queryable annotations for resources, but can't be used to set conditions on policies. Tags provide a way to conditionally allow or deny policies based on whether a resource has a specific tag, by providing fine-grained control over policies.
+
+### You can apply labels to the following Compute Engine resources:
+
+- Virtual machine (VM) instances
+- Images
+- Persistent disks
+- Persistent disk snapshots
+
+### You can also use labels on related Google Cloud components such as the following:
+
+- [Cloud Storage buckets](https://cloud.google.com/storage/docs/using-bucket-labels)
+- Networking resources:
+    - Forwarding rules
+    - VPN tunnels
+    - Static external IP addresses
+
+# Tags
+
+Tags help you identify and organize resources, assign cost accountability, and conditionally allow or deny network firewall policies.
+
+## Specifications
+
+Tags have the following specifications:
+
+Tags are resources created within an [organization](https://cloud.google.com/resource-manager/docs/creating-managing-organization) or [project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) resource. 
+
+When you create a Tag to use in a network firewall policy, you choose which VPC network to associate the Tag with.
+
+- The VPC networks must belong to a project within an organization.
+- **Structure and format:** Tags are resources that contain two components: a key and one or more values.
+    - You can create a maximum of 1000 Tag keys in an organization or project.
+    - Each Tag key can have a maximum of 1000 Tag values.
+
+**Access control:** [IAM policies](https://cloud.google.com/firewall/docs/tags-firewalls-overview?_gl=1*1dc4t94*_ga*Mjk0NTAzMDIuMTcwNzkyNTAwNw..*_ga_WH2QY8WWF5*MTcxMDczNTQwMS42OC4xLjE3MTA3Mzk5OTcuMC4wLjA.&_ga=2.64758764.-29450302.1707925007&_gac=1.24064456.1710486988.Cj0KCQjwwMqvBhCtARIsAIXsZpbBb87huO5PQAfXSqHs9mp2-bF35uGdvJw1siqNTz1G4NIhT3KaqY8aAlG0EALw_wcB#iam) determine which IAM principals can create and use Tags. IAM principals with the Tag Administrator role can create Tag definitions.
+
+**Binding to VMs:** Each Tag can be attached to an unlimited number of VM instances. You can attach a maximum of 10 Tags per network interface (NIC) of a VM. For example:
+
+- If a VM has a single NIC, you can attach up to 10 Tags. Each Tag must be associated with the same VPC network used by the VM's single NIC.
+- If a VM has two NICs, you can attach up to 10 Tags associated with the VPC network used by `nic0` and up to 10 Tags associated with the VPC network used by `nic1`.
+
+## IAM roles
+
+To create and manage Tag keys and Tag values, you need the Tag Administrator role or a custom role with equivalent permissions. For more information, see [Administer tags](https://cloud.google.com/resource-manager/docs/tags/tags-creating-and-managing#required-permissions-administer).
+
+To manage Tags on a VM, you need both of the following:
+
+- Permissions to use the specific Tag
+- Permissions to manage the Tag on a specific VM
+
+| Task | Permission | Role |  |
+| --- | --- | --- | --- |
+| Use a Tag | The following permissions for the specific Tag:
+• resourcemanager.tagValueBindings.create
+• resourcemanager.tagValueBindings.delete | Grant the Tag User role on the specific Tag. |  |
+| Manage a Tag on a VM | The following permissions for the specific VM:
+• compute.instances.createTagBinding
+• compute.instances.deleteTagBinding | Grant one of the following roles on the specific VM.Many roles include the required permissions, including the following:
+• Tag User
+• Compute Instance Admin (v1)
+• Compute Admin |  |
+
+# **Regions and zones**
+
+![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/73b21c50-851d-4020-8a98-c47cce5fabb9/fc00ce49-8111-41c1-8820-abd37072212a/Untitled.png)
+
+A region is a specific geographical location where you can host your resources.
+
+Regions have three or more zones. For example, the `us-west1` region denotes a region on the west coast of the United States that has three zones: `us-west1-a`, `us-west1-b`, and `us-west1-c`.
+
+Putting resources in different zones in a region reduces the risk of an infrastructure outage affecting all resources simultaneously.
+
+**Zone**
+
+A *zone* is a deployment area within a region. The fully-qualified name for a zone is made up of `<region>-<zone>`. For example, the fully qualified name for zone `a` in region `us-central1` is `us-central1-a`.
+
+The zone determines what computing resources are available and where your data is stored and used.
+
+Certain resources, such as static IPs, images, firewall rules, and VPC networks, have defined project-wide quota limits and per-region quota limits.
+
+## [Machine configuration](https://cloud.google.com/compute/docs/machine-resource)
+
+Compute Engine machine families : - 
+
+- [General-purpose](https://cloud.google.com/compute/docs/general-purpose-machines) —best price-performance ratio for a variety of workloads.
+- [Storage-optimized](https://cloud.google.com/compute/docs/storage-optimized-machines) —best for workloads that are low in core usage and high in storage density.
+- [Compute-optimized](https://cloud.google.com/compute/docs/compute-optimized-machines) —highest performance per core on Compute Engine and optimized for compute-intensive workloads.
+- [Memory-optimized](https://cloud.google.com/compute/docs/memory-optimized-machines) —ideal for memory-intensive workloads, offering more memory per core than other machine families, with up to 12 TB of memory.
+- [Accelerator-optimized](https://cloud.google.com/compute/docs/accelerator-optimized-machines) —ideal for massively parallelized Compute Unified Device Architecture (CUDA) compute workloads, such as machine learning (ML) and high performance computing (HPC). This family is the best option for workloads that require GPUs.
+
+| Generation | Intel | AMD | Arm |
+| --- | --- | --- | --- |
+| 3rd generation machine series | C3, Z3, H3, M3, A3 | C3D |  |
+| 2nd generation machine series | E2, N2, C2, M2, A2, G2 | N2D, C2D, T2D, E2 | T2A |
+| 1st generation machine series | N1, M1 |  |  |
+
+| General-purpose workloads |  |  |  |
+| --- | --- | --- | --- |
+| E2 | N2, N2D, N1 | C3, C3D | Tau T2D, Tau T2A |
+| Day-to-day computing at a lower cost | Balanced price/performance across a wide range of machine types | Consistently high performance for a variety of workloads | Best per-core performance/cost for scale-out workloads |
+| • Low-traffic web servers
+• Back office apps
+• Containerized microservices
+• Microservices
+• Virtual desktops
+• Development and test environments | Low to medium traffic web and app serversContainerized microservicesBusiness intelligence appsVirtual desktopsCRM applicationsData Pipelines | High traffic web and app serversDatabasesIn-memory cachesAd serversGame ServersData analyticsMedia streaming and transcodingCPU-based ML training and inference | Scale-out workloadsWeb servingContainerized microservicesMedia transcodingLarge-scale Java applications |
+
+| Optimized workloads |  |  |  |
+| --- | --- | --- | --- |
+| Storage-optimized | Compute-optimized | Memory-optimized | Accelerator-optimized |
+| Z3 (https://cloud.google.com/products#product-launch-stages) | H3, C2, C2D | M3, M2, M1 | A3, A2, G2 |
+| Highest block storage to compute ratios for storage-intensive workloads | Ultra high performance for compute-intensive workloads | Highest memory to compute ratios for memory-intensive workloads | Optimized for accelerated high performance computing workloads |
+| • File servers
+• Flash-optimized databases
+• Scale-out analytics
+• Other databases | • Compute-bound workloads
+• High-performance web servers
+• Game Servers
+• High performance computing (HPC)
+• Media transcoding
+• Modeling and simulation workloads
+• AI/ML | • Medium to extra-large SAP HANA in-memory databases
+• In-memory data stores, such as Redis
+• Simulation
+• High Performance databases such as Microsoft SQL Server, MySQL
+• Electronic design automation | • Generative AI models such as the following:
+    ◦ Large Language Models (LLM)
+    ◦ Diffusion Models
+    ◦ Generative Adversarial Networks (GAN)
+• CUDA-enabled ML training and inference
+• High-performance computing (HPC)
+• Massively parallelized computation
+• BERT natural language processing
+• Deep learning recommendation model (DLRM)
+• Video transcoding
+• Remote visualization workstation |
+
+After you create a VM, you can use *rightsizing recommendations* to optimize resource utilization based on your workload.
+
+All machine series support [Spot VMs](https://cloud.google.com/compute/docs/instances/preemptible) (and preemptible VMs), with the exception of the M2, M3, and H3 machine series.
+
+## What are [Spot VMs](https://cloud.google.com/compute/docs/instances/spot)?
+
+Spot VMs are available at much lower prices—[60-91% discounts](https://cloud.google.com/compute/docs/instances/spot#pricing) for most machine types and GPUs as well as smaller discounts for local SSDs and A3 VMs—compared to the on-demand price for standard VMs. However, Compute Engine might preempt Spot VMs at any time, such as when it needs the resources for other tasks.
+
+- The [Google Cloud Free Tier](https://cloud.google.com/free) credits for Compute Engine do not apply to Spot VMs.
+
+## What is a [preemptible instance](https://cloud.google.com/compute/docs/instances/preemptible)?
+
+Preemptible VM instances are available at much lower price—a [60-91% discount](https://cloud.google.com/compute/docs/instances/preemptible#pricing)—compared to the price of standard VMs.
+
+# **Sole-tenant nodes**
+
+Sole-tenant nodes are physical servers dedicated to hosting only VMs in your project. They’re often used for running workloads with extra security, compliance, performance, or licensing requirements
+
+Sole-tenancy lets you have exclusive access to a *sole-tenant node*, which is a physical Compute Engine server that is dedicated to hosting only your project's VMs. Use sole-tenant nodes to keep your VMs physically separated from VMs in other projects, or to group your VMs together on the same host hardware as shown in the following diagram. 
+
+You can also create a sole-tenant node group and specify whether you want to [share it with other projects or with the entire organization](https://cloud.google.com/compute/docs/nodes/share-node-groups).
+
+![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/73b21c50-851d-4020-8a98-c47cce5fabb9/21faabbf-c6ca-4602-990c-002d504cffb5/Untitled.png)
+
+                                            *A multi-tenant host versus a sole-tenant node.*
+
+Within a sole-tenant node, you can provision multiple VMs on machine types of various sizes, which lets you efficiently use the underlying resources of the dedicated host hardware. Also, if you choose not to share the host hardware with other projects, you can meet security or compliance requirements with workloads that require physical isolation from other workloads or VMs. If your workload requires sole tenancy only temporarily, you can modify [VM tenancy](https://cloud.google.com/compute/docs/nodes/vm-tenancy) as necessary.
+
+Sole-tenant nodes can help you meet dedicated hardware requirements for [bring your own license (BYOL)](https://cloud.google.com/compute/docs/nodes/bringing-your-own-licenses) scenarios that require per-core or per-processor licenses.
+
+**The following types of workloads might benefit from using sole-tenant nodes:**
+
+- Gaming workloads with performance requirements.
+- Finance or healthcare workloads with security and compliance requirements.
+- Windows workloads with licensing requirements.
+- Machine learning, data processing, or image rendering workloads. For these workloads, consider [reserving GPUs](https://cloud.google.com/compute/docs/nodes/provisioning-sole-tenant-vms).
+- Workloads requiring increased input/output operations per second (IOPS) and decreased latency, or workloads that use temporary storage in the form of caches, processing space, or low-value data. For these workloads, consider [reserving Local SSDs](https://cloud.google.com/compute/docs/nodes/provisioning-sole-tenant-vms).
+
+## Node templates
+
+A node template is a regional resource that defines the properties of each node in a node group. When you create a node group from a node template, the properties of the node template are immutably copied to each node in the node group.
+
+When you create a node template you must specify a node type. You can optionally specify node affinity labels when you create a node template. You can only specify node affinity labels on a node template. You can't specify node affinity labels on a node group.
+
+# Machine Image
+
+A machine image contains a VM’s properties, metadata, permissions, and data from all its attached disks. You can use a machine image to create, backup, or restore a VM.
+
+# Machine Types
+
+Machine types determine the physical specifications of your machines, such as the amount of memory, virtual cores, and persistent disk limits an instance will have. All machine types are currently managed by Google Compute Engine.
+
+Machine types are divided in different classes, including:
+
+- Standard machine types
+- High CPU machine types
+- High memory machine types
+- Small machine types
+
+### What are Google Compute Engine Units (GCEUs)?
+
+GCEU (Google Compute Engine Unit) is a unit of CPU capacity that we use to describe the compute power of our instance types. We chose 2.75 GCEUs to represent the minimum power of one logical core (a hardware hyper-thread) on our Sandy Bridge or Ivy Bridge platform.
+
+To view a list of available machine types, you can always run:
+
+```
+$ gcloud compute machine-types list
+```
+
+**Confidential VM service**
+
+Confidential VM instances are a type of [Compute Engine](https://cloud.google.com/compute/docs) virtual machine. They use hardware-based memory encryption to help ensure your data and applications can't be read or modified while in use.
+
+**Container**
+
+You can deploy a container to this VM instance by using a container-optimized OS image.
+
+**Boot disk**
+
+Each instance requires a disk to boot from. Select an image or snapshot to create a new boot disk or attach an existing disk to the instance.
+
+### **Identity and API access**
+
+Applications running on the VM use the service account to call Google Cloud APIs. Select the service account you want to use and the level of API access you want to allow.
+
+### Access scopes
+
+Default: read-only access to Storage and Service Management, write access to Stackdriver Logging and Monitoring, read/write access to Service Control.
+
+### **Firewall**
+
+By default, all incoming traffic from outside a network is blocked. Select the type of network traffic you want to allow.
+
+**Observability - Ops Agent**
+
+The Ops Agent is the primary agent for collecting telemetry from your Compute Engine instances. Combining logging and metrics into a single agent, the Ops Agent uses Fluent Bit for logs, which supports high-throughput logging, and the OpenTelemetry Collector for metrics. Install may take a few minutes after VM creation.
+
+**Advanced options:-**    
+
+Networking, disks, security, management, sole-tenancy
+
+………………………………
+
+# **Instance groups**
+
+An instance group is a collection of virtual machine (VM) instances that you can manage as a single entity.
+
+Compute Engine offers two kinds of VM instance groups, managed and unmanaged:
+
+- **Managed instance groups** (MIGs) let you operate apps on multiple identical VMs. You can make your workloads scalable and highly available by taking advantage of automated MIG services, including: autoscaling, autohealing, regional (multiple zone) deployment, and automatic updating.
+- **Unmanaged instance groups** let you load balance across a fleet of VMs that you manage yourself.
+
+## Managed instance groups (MIGs)
+
+Use a managed instance group (MIG) for scenarios like these:
+
+- Stateless serving workloads, such as a website frontend
+- Stateless batch, high-performance, or high-throughput compute workloads, such as image processing from a queue
+- Stateful applications, such as databases, legacy applications, and long-running batch computations with checkpointing
+
+ Advantages of MIGs-:
+
+- **High availability**.
+    - **Automatically repairing failed VMs**. If a VM in the group stops, crashes, gets preempted ([Spot VMs](https://cloud.google.com/compute/docs/instances/spot)), or is deleted by an action not initiated by the MIG, the MIG automatically recreates that VM based on its original configuration (same VM name, same template) so that the VM can resume its work.
+    - **Application-based autohealing**. You can also set up an application-based health check, which periodically verifies that your application responds as expected on each of the MIG's instances. If an application is not responding on a VM, the MIG automatically recreates that VM for you. Checking that an application responds is more precise than simply verifying that a VM is up and running.
+    - **Regional (multiple zone) coverage**. Regional MIGs let you spread app load across multiple zones. This replication protects against zonal failures. If that happens, your app can continue serving traffic from instances running in the remaining available zones in the same region.
+    - **Load balancing**. MIGs work with load balancing services to distribute traffic across all of the instances in the group.
+    - **Scalability**. When your apps require additional compute resources, autoscaled MIGs can automatically grow the number of instances in the group to meet demand. If demand drops, autoscaled MIGs can automatically shrink to reduce your costs.
+    - **Automated updates**. The MIG automatic updater lets you safely deploy new versions of software to instances in your MIG and supports a flexible range of rollout scenarios, such as rolling updates and canary updates. You can control the speed and scope of deployment as well as the level of disruption to your service.
+    - **Support for stateful workloads**. You can use MIGs for building highly available deployments and automating operation of applications with stateful data or configuration, such as databases, DNS servers, legacy monolith applications, or long-running batch computations with checkpointing. Stateful MIGs preserve each instance's unique state (instance name, attached persistent disks, and metadata) on machine restart, recreation, auto-healing, and update events.
+    - **Create GPU VMs all at once**. When you have a batch job, such as an AI or ML training, that requires an exact number of GPU VMs, then creating a resize request in a MIG can help you to create the VMs all at once. You can specify the duration for which you want the VMs to run for, thereby improving the obtainability of highly-demanded resources such as GPUs.
+
+!https://cloud.google.com/static/compute/images/mig-overview.svg
+
+                                                   *MIG capabilities and common workloads*
+
+## Unmanaged instance groups
+
+Unmanaged instance groups can contain heterogeneous instances that you can arbitrarily add and remove from the group. 
+
+Unmanaged instance groups do not offer autoscaling, autohealing, rolling update support, multi-zone support, or the use of instance templates and are not a good fit for deploying highly available and scalable workloads. 
+
+Use unmanaged instance groups if you need to apply [load balancing](https://cloud.google.com/load-balancing/docs/choosing-load-balancer) to groups of heterogeneous instances, or if you need to manage the instances yourself. You can add up to 2,000 VMs to a group.
