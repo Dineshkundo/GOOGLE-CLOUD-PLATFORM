@@ -1,0 +1,99 @@
+# Create 2 Service Accounts in IAM and attach the roles & permissions (view/owner/read) ?
+
+gcloud config list -> list user project and region and zone
+
+### Creating a new service account
+
+`gcloud iam service-accounts create SERVICEACCCOUNTNAME --description="Service Account 1"
+gcloud iam service-accounts create SERVICEACCOUNTNAME --description="Service Account 2"`
+
+### Adding permissions i.e viewer/owner/editor/browser
+
+`gcloud projects add-iam-policy-binding PROJECTNAME [--member=serviceAccount:SERVICEACCOUNTNAME@PROJECTNAME.iam.gserviceaccount.com](mailto:--member=serviceAccount:SERVICEACCOUNTNAME@PROJECTNAME.iam.gserviceaccount.com) --role=roles/viewer`
+E.g:-
+gcloud projects add-iam-policy-binding admin-416707 [--member=serviceAccount:service-account-2@admin-416707.iam.gserviceaccount.com](mailto:--member=serviceAccount:service-account-2@admin-416707.iam.gserviceaccount.com) --role=roles/viewer
+
+### To list out the permission of a service account
+
+`gcloud projects get-iam-policy PROJECTNAME --flatten="bindings[].members" --format='table(bindings.role, bindings.members)'`
+
+…………………………………………….
+
+# Creating instance groups using instance template and run 3 instance with startup script?
+
+gcloud set project Project_id
+
+gcloud config set project project_id
+ls
+vi [startup-script.sh](http://startup-script.sh/)
+
+gcloud storage buckets create gs://STORAGENAME (Make it public)
+
+Note:- 
+
+```
+gsutil mb -p PROJECT_ID -c STORAGE_CLASS -l REGION gs://BUCKET_NAME
+gsutil iam ch allUsers:objectViewer gs://BUCKET_NAME
+
+```
+
+Replace the placeholders with your actual values:
+
+- **`PROJECT_ID`**: Your Google Cloud project ID.
+- **`STORAGE_CLASS`**: The storage class for the bucket (e.g., **`STANDARD`**, **`NEARLINE`**, **`COLDLINE`**).
+- **`REGION`**: The region for the bucket (e.g., **`us-central1`**, **`europe-west1`**).
+- **`BUCKET_NAME`**: The name of your bucket.
+
+gsutil cp [startup-script.sh](http://startup-script.sh/) gs://STORAGENAME/startup-script.sh
+
+gcloud compute instance-templates create example-template-custom \
+--machine-type=e2-standard-4 \
+--image-family=debian-10 \
+--image-project=debian-cloud \
+--boot-disk-size=250GB \
+
+--tags http-server \
+--metadata startup-script-url=gs://[YOUR_BUCKET]/[YOUR_FOLDER]/startup-script.sh
+
+gcloud compute instance-groups managed create my-instance-group --base-instance-name=my-instance    --size=3 --template=example-template-custom --zone=us-central1-a
+
+eg:-
+
+gcloud compute instance-groups managed create my-instance-group \
+--base-instance-name=my-instance \
+--size=3 \
+--template=demo-instance \
+--zone=us-central1-a
+
+…………………………..
+
+# Bastion-host using cli
+
+1) gcloud compute networks create VPC_NAME --subnet-mode=custom --description="vpc creating through cli"
+
+eg:-
+gcloud compute networks create vm-custom --subnet-mode=custom --description="vpc creating through cli"
+
+2)  gcloud compute networks subnets create sub-a --network=vm-custom --region=us-central1 --range=10.0.0.0/24
+
+3)  gcloud compute networks subnets create sub-b --network=vm-custom --region=us-central1 --range=10.1.0.0/24
+
+4)  gcloud compute firewall-rules create allow-ssh --network=vm-custom --allow=tcp:22
+
+5)  gcloud compute firewall-rules create allow-internal --network=vm-custom --allow=tcp:0-65535,udp:0-65535,icmp
+
+6)  gcloud compute instances create bastion-host --zone=us-central1-a --machine-type=n1-standard-1 --network=vm-custom --subnet=sub-a --tags=ssh
+
+7)  gcloud compute instances create private-server --zone=us-central1-b --machine-type=n1-standard-1 --network=vm-custom --subnet=sub-b
+
+8)  gcloud compute ssh bastion-host --zone=us-central1-a
+
+Authentication……………..
+
+gcloud auth login….
+using service account keys.json
+
+`vi key.json
+kundodinesh0@bastion-host:~$ whoami
+kundodinesh0
+kundodinesh0@bastion-host:~$ export GOOGLE_APPLICATION_CREDENTIALS="/home/kundodinesh0/key.json"`
